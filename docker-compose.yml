@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  service-config:
+    build: ./service-config
+    ports:
+      - "8080:8080" # Port pour le service de configuration
+    environment:
+      - SPRING_APPLICATION_NAME=service-config
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/scmc24/cloud-conf
+    networks:
+      - microservices-network
+
+  service-registry:
+    build: ./service-registry
+    depends_on:
+      - service-config  # Elle attend que le service-config demarre d'abord
+    environment:
+      - SPRING_APPLICATION_NAME=service-registry
+      - SPRING_CLOUD_CONFIG_URI=http://service-config:8080 # Utilisation du nom de service
+      - SPRING_CONFIG_IMPORT=configserver:http://service-config:8080
+    ports:
+      - "8081:8761" # Mappage du port 8761 a l'interieur du conteneur vers le port 8081 sur l'hote
+    networks:
+      - microservices-network
+
+  service-notification:
+    build: ./service-notification
+    depends_on:
+      - service-config
+      - service-registry
+    environment:
+      - SPRING_APPLICATION_NAME=service-notification
+      - SPRING_CLOUD_CONFIG_URI=http://service-config:8080
+      - SPRING_CONFIG_IMPORT=configserver:http://service-config:8080
+    ports:
+      - "8087" # Port interne, ne pas mapper ici 
+    networks:
+      - microservices-network
+    
+  service-proxy:
+    build: ./service-proxy
+    depends_on:
+      - service-config
+      - service-registry
+    environment:
+      - SPRING_APPLICATION_NAME=service-proxy
+      - SPRING_CLOUD_CONFIG_URI=http://service-config:8080
+      - SPRING_CONFIG_IMPORT=configserver:http://service-config:8080
+    ports:
+      - "8082:8079" # Mappage du port 8079 a l'interieur du conteneur vers le port 8082 sur l'hote
+    networks:
+      - microservices-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672" # Port pour RabbitMQ
+      - "15672:15672" # Port pour l'interface de gestion
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
