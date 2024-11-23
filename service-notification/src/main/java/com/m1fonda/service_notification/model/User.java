@@ -16,9 +16,15 @@ public class User {
     private int id;
 
     @NotBlank(message = "Le nom ne peut pas être vide.")
-    private String name;
+    private String username;
+
+    @NotBlank(message = "le cni_number ne peut pas etre vide")
+    private String cni_number;
 
     @Email(message = "L'adresse e-mail doit être valide.")
     @NotBlank(message = "L'adresse e-mail est obligatoire.")
     private String email;
+
+    @NotBlank(message = "Le password ne peut pas etre vide")
+    private String password;
 }

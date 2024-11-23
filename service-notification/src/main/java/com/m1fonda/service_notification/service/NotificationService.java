@@ -23,7 +23,7 @@ public class NotificationService {
     public void createNotification(Long userId, String notificationText) {
         Notification notification = new Notification();
         notification.setUserId(userId);
-        notification.setContent(notificationText);
+        notification.setMessage(notificationText);
         notification.setCreatedAt(LocalDateTime.now());
 
         notificationRepository.save(notification);

@@ -23,10 +23,18 @@ public class UserEvent {
 
     @JsonProperty("name")
     @NotBlank(message = "Le nom de l'utilisateur ne peut pas être vide.")
-    private String name;
+    private String username;
+
+    @JsonProperty("cni_number")
+    @NotBlank(message = "Le cni_number ne peut pas etre vide")
+    private String cni_number;
 
     @JsonProperty("email")
     @Email(message = "L'adresse e-mail doit être valide.")
     @NotBlank(message = "L'adresse e-mail est obligatoire.")
     private String email;
+
+    @JsonProperty("password")
+    @NotBlank(message = "Le password ne peut pas etre vide")
+    private String password;
 }
